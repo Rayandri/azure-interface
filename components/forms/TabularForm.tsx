@@ -48,7 +48,7 @@ const defaultValues = {
 
 // Random value generators based on dataset ranges
 const generateRandomValues = () => {
-  const ageYears = (Math.random() * 10 + 0.25).toFixed(2)
+  const ageYears = (Math.random() * 10 + 0.25).toFixed(1)
   const ageMonths = (Number.parseFloat(ageYears) * 12).toFixed(0)
 
   return {

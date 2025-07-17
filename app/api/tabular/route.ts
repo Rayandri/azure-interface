@@ -6,15 +6,21 @@ const TABULAR_ENDPOINT =
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
+    const formData = await request.json()
+    
+    const dataframeFormat = {
+      dataframe_split: {
+        columns: ["Age_in_years","Age_in_months","Gender","Neutered_or_spayed","Body_length","Weight","Fur_colour_dominant","Fur_pattern","Eye_colour","Allowed_outdoor","Preferred_food","Owner_play_time_minutes","Sleep_time_hours","Country","Latitude","Longitude"],
+        data: [formData]
+      }
+    }
 
-    // Forward the request to the Azure endpoint
     const response = await fetch(TABULAR_ENDPOINT, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(dataframeFormat),
     })
 
     if (!response.ok) {

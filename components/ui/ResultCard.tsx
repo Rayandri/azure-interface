@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card"
-import { CheckCircle, AlertCircle, Sparkles } from "lucide-react"
+import { CheckCircle, AlertCircle, Sparkles, Trophy, Target } from "lucide-react"
 
 interface ResultCardProps {
   result: any
@@ -22,6 +22,8 @@ export function ResultCard({ result, type, gradient }: ResultCardProps) {
     )
   }
 
+  const isPhotoAnalysis = result.predictions && Array.isArray(result.predictions)
+
   return (
     <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm overflow-hidden">
       <div className={`h-1 bg-gradient-to-r ${gradient}`} />
@@ -37,35 +39,75 @@ export function ResultCard({ result, type, gradient }: ResultCardProps) {
         </div>
 
         <div className="space-y-4">
-          {/* Display prediction results based on API response structure */}
-          {result.breed && (
-            <div className="bg-slate-700/50 rounded-lg p-4">
-              <div className="flex items-center mb-2">
-                <Sparkles className="w-5 h-5 text-yellow-400 mr-2" />
-                <span className="font-semibold text-white">Predicted Breed</span>
+          {isPhotoAnalysis ? (
+            <>
+              <div className="bg-slate-700/50 rounded-lg p-6 space-y-4">
+                <div className="flex items-center mb-4">
+                  <Trophy className="w-5 h-5 text-yellow-400 mr-2" />
+                  <span className="font-semibold text-white text-lg">Breed Predictions</span>
+                </div>
+                
+                {result.predictions
+                  .sort((a: any, b: any) => b.probability - a.probability)
+                  .map((prediction: any, index: number) => {
+                    const percentage = Math.round(prediction.probability * 100)
+                    const isTopPrediction = index === 0
+                    
+                    return (
+                      <div key={prediction.tagName} className={`p-4 rounded-lg ${isTopPrediction ? 'bg-gradient-to-r from-emerald-500/20 to-blue-500/20 border border-emerald-400/30' : 'bg-slate-600/30'}`}>
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center">
+                            {isTopPrediction && <Target className="w-4 h-4 text-emerald-400 mr-2" />}
+                            <span className={`font-semibold capitalize ${isTopPrediction ? 'text-emerald-300 text-lg' : 'text-slate-200'}`}>
+                              {prediction.tagName}
+                            </span>
+                          </div>
+                          <span className={`font-bold ${isTopPrediction ? 'text-emerald-300 text-lg' : 'text-slate-300'}`}>
+                            {percentage}%
+                          </span>
+                        </div>
+                        <div className="w-full bg-slate-600 rounded-full h-2">
+                          <div
+                            className={`h-2 rounded-full ${isTopPrediction ? 'bg-gradient-to-r from-emerald-400 to-blue-400' : 'bg-slate-400'}`}
+                            style={{ width: `${percentage}%` }}
+                          />
+                        </div>
+                      </div>
+                    )
+                  })}
               </div>
-              <p className="text-2xl font-bold text-transparent bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text">
-                {result.breed}
-              </p>
-            </div>
+            </>
+          ) : (
+            <>
+              {result.breed && (
+                <div className="bg-slate-700/50 rounded-lg p-4">
+                  <div className="flex items-center mb-2">
+                    <Sparkles className="w-5 h-5 text-yellow-400 mr-2" />
+                    <span className="font-semibold text-white">Predicted Breed</span>
+                  </div>
+                  <p className="text-2xl font-bold text-transparent bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text">
+                    {result.breed}
+                  </p>
+                </div>
+              )}
+
+              {result.confidence && (
+                <div className="bg-slate-700/50 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-semibold text-white">Confidence</span>
+                    <span className="text-green-400 font-bold">{Math.round(result.confidence * 100)}%</span>
+                  </div>
+                  <div className="w-full bg-slate-600 rounded-full h-2">
+                    <div
+                      className={`h-2 rounded-full bg-gradient-to-r ${gradient}`}
+                      style={{ width: `${result.confidence * 100}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+            </>
           )}
 
-          {result.confidence && (
-            <div className="bg-slate-700/50 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-semibold text-white">Confidence</span>
-                <span className="text-green-400 font-bold">{Math.round(result.confidence * 100)}%</span>
-              </div>
-              <div className="w-full bg-slate-600 rounded-full h-2">
-                <div
-                  className={`h-2 rounded-full bg-gradient-to-r ${gradient}`}
-                  style={{ width: `${result.confidence * 100}%` }}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Display raw result for debugging */}
           <details className="bg-slate-700/30 rounded-lg p-4">
             <summary className="cursor-pointer text-slate-300 font-medium">View Raw Response</summary>
             <pre className="mt-2 text-xs text-slate-400 overflow-auto">{JSON.stringify(result, null, 2)}</pre>

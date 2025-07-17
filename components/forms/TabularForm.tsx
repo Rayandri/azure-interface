@@ -42,8 +42,8 @@ const defaultValues = {
   Owner_play_time_minutes: "30",
   Sleep_time_hours: "14",
   Country: "France",
-  Latitude: "48.8566",
-  Longitude: "2.3522",
+  Latitude: "48.9",
+  Longitude: "2.4",
 }
 
 // Random value generators based on dataset ranges
@@ -67,8 +67,8 @@ const generateRandomValues = () => {
     Owner_play_time_minutes: (Math.random() * 120 + 10).toFixed(0), // 10-130 minutes
     Sleep_time_hours: (Math.random() * 8 + 10).toFixed(1), // 10-18 hours
     Country: formOptions.Country[Math.floor(Math.random() * formOptions.Country.length)],
-    Latitude: (Math.random() * 140 - 70).toFixed(4), // -70 to 70
-    Longitude: (Math.random() * 360 - 180).toFixed(4), // -180 to 180
+    Latitude: (Math.random() * 140 - 70).toFixed(1), // -70 to 70
+    Longitude: (Math.random() * 360 - 180).toFixed(1), // -180 to 180
   }
 }
 

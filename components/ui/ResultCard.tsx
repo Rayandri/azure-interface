@@ -22,7 +22,8 @@ export function ResultCard({ result, type, gradient }: ResultCardProps) {
     )
   }
 
-  const isPhotoAnalysis = result.predictions && Array.isArray(result.predictions)
+  const isPhotoAnalysis = result.predictions && Array.isArray(result.predictions) && typeof result.predictions[0] === 'object'
+  const isTabularAnalysis = result.predictions && Array.isArray(result.predictions) && typeof result.predictions[0] === 'string'
 
   return (
     <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm overflow-hidden">
@@ -75,6 +76,24 @@ export function ResultCard({ result, type, gradient }: ResultCardProps) {
                       </div>
                     )
                   })}
+              </div>
+            </>
+          ) : isTabularAnalysis ? (
+            <>
+              <div className="bg-slate-700/50 rounded-lg p-6">
+                <div className="flex items-center mb-4">
+                  <Sparkles className="w-5 h-5 text-yellow-400 mr-2" />
+                  <span className="font-semibold text-white text-lg">Predicted Breed</span>
+                </div>
+                
+                <div className="p-4 rounded-lg bg-gradient-to-r from-emerald-500/20 to-blue-500/20 border border-emerald-400/30">
+                  <div className="flex items-center">
+                    <Target className="w-6 h-6 text-emerald-400 mr-3" />
+                    <span className="text-2xl font-bold text-emerald-300 capitalize">
+                      {result.predictions[0]}
+                    </span>
+                  </div>
+                </div>
               </div>
             </>
           ) : (
